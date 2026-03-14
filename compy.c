@@ -123,6 +123,10 @@ static struct wlr_output_layout *output_layout;
 static struct wl_list outputs;
 static struct wl_listener new_output;
 
+/* config options */
+static uint32_t border_width = 1;
+static float border_coor[4] = COLOR(0xff00ffff);
+
 static void die(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
@@ -208,15 +212,6 @@ static bool handle_keybinding(xkb_keysym_t sym) {
         break;
     case XKB_KEY_Return:
         spawn((char *[]){"/usr/bin/foot", NULL});
-        break;
-    case XKB_KEY_F:
-        /* Cycle to the next toplevel */
-        if (wl_list_length(&toplevels) < 2) {
-            break;
-        }
-        struct tinywl_toplevel *next_toplevel =
-            wl_container_of(toplevels.prev, next_toplevel, link);
-        focus_toplevel(next_toplevel);
         break;
     default:
         return false;
@@ -682,16 +677,13 @@ static void server_new_output(struct wl_listener *listener, void *data) {
     wlr_scene_output_layout_add_output(scene_layout, l_output, scene_output);
 }
 
-static uint32_t border_width = 1;
-
 static void xdg_toplevel_map(struct wl_listener *listener, void *data) {
     /* Called when the surface is mapped, or ready to display on-screen. */
     struct tinywl_toplevel *toplevel = wl_container_of(listener, toplevel, map);
 
     /* Initialize borders. */
     for (int i = 0; i < 4; i++) {
-        float color[4] = COLOR(0xff00ffff);
-        toplevel->border[i] = wlr_scene_rect_create(toplevel->scene_tree, 0, 0, color);
+        toplevel->border[i] = wlr_scene_rect_create(toplevel->scene_tree, 0, 0, border_coor);
     }
 
     /* Expand toplevel surface geometry to accomodate borders. */
