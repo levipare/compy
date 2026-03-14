@@ -19,11 +19,11 @@ CPPFLAGS = -I. -D_POSIX_C_SOURCE=200809L -DWLR_USE_UNSTABLE -DVERSION=\"$(VERSIO
 CFLAGS   = $(INCS)
 LDFLAGS  = $(LIBS) 
 
-all: tinywl
+all: compy
 
-tinywl: tinywl.o
+compy: compy.o
 
-tinywl.o: tinywl.c \
+compy.o: compy.c \
 	xdg-shell-protocol.h \
 	wlr-layer-shell-unstable-v1-protocol.h \
 
@@ -37,4 +37,4 @@ config.h:
 	cp config.def.h $@
 
 clean:
-	rm -f tinywl *.o *-protocol.h
+	rm -f compy *.o *-protocol.h
